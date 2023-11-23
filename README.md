@@ -1,4 +1,8 @@
-![LogoSample](https://github.com/yousefosama654/Logic-Lens/assets/93356614/b4fcc32e-3673-4136-a2e8-698012a7dbdd)
+<div align=center >
+<img align="center"  src="https://github.com/yousefosama654/Logic-Lens/assets/LogoSample.png">
+</div>
+
+
 
 
 # Description
