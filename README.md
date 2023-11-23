@@ -2,9 +2,6 @@
 <img align="center"  src="https://i.ibb.co/Ykc79yZ/Logo-Sample.png">
 </div>
 
-<a align="center" href="https://imgbb.com/"><img align="center" src="https://i.ibb.co/Ykc79yZ/Logo-Sample.png" alt="Logo-Sample" border="0" /></a>
-
-
 # Description
 
 Logic Lens is an application that allows you to get the truth table of a logical expression, or the corresponding logical expression of a given truth table, only by taking a picture of it! 
