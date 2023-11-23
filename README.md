@@ -1,8 +1,5 @@
-<div align=center >
+![LogoSample](https://github.com/yousefosama654/Logic-Lens/assets/93356614/b4fcc32e-3673-4136-a2e8-698012a7dbdd)
 
-  ![LogoSample](https://github.com/yousefosama654/Logic-Lens/assets/93356614/b4fcc32e-3673-4136-a2e8-698012a7dbdd)
-
-</div>
 
 # Description
 
