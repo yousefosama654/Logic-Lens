@@ -1,4 +1,4 @@
-<div align=center >
+<div align="center" >
 <img align="center"  src="https://github.com/yousefosama654/Logic-Lens/assets/LogoSample.png">
 </div>
 
