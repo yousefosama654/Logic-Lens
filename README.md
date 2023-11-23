@@ -1,5 +1,5 @@
 <div align="center" >
-<img align="center"  src="https://github.com/yousefosama654/Logic-Lens/assets/LogoSample.png">
+<img align="center"  src="https://i.ibb.co/Ykc79yZ/Logo-Sample.png">
 </div>
 
 <a align="center" href="https://imgbb.com/"><img align="center" src="https://i.ibb.co/Ykc79yZ/Logo-Sample.png" alt="Logo-Sample" border="0" /></a>
