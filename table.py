@@ -102,15 +102,6 @@ for minterm in minterms:
         groups[bin(minterm).count('1')] = [bin(minterm)[2:].zfill(size)]
 # Primary grouping ends
 
-#Primary group printing starts
-# print("\n\n\n\nGroup No.\tMinterms\tBinary of Minterms\n%s"%('='*50))
-# for i in sorted(groups.keys()):
-#     print("%5d:"%i) # Prints group number
-#     for j in groups[i]:
-#         print("\t\t    %-20d%s"%(int(j,2),j)) # Prints minterm and its binary representation
-#     print('-'*50)
-#Primary group printing ends
-
 # Process for creating tables and finding prime implicants starts
 while True:
     tmp = groups.copy()
@@ -131,28 +122,16 @@ while True:
         m += 1
     local_unmarked = set(flatten(tmp)).difference(marked) # Unmarked elements of each table
     all_pi = all_pi.union(local_unmarked) # Adding Prime Implicants to global list
-    # print("Unmarked elements(Prime Implicants) of this table:",None if len(local_unmarked)==0 else ', '.join(local_unmarked)) # Printing Prime Implicants of current table
     if should_stop: # If the minterms cannot be combined further
         break
-        # print("\n\nAll Prime Implicants: ",None if len(all_pi)==0 else ', '.join(all_pi)) # Print all prime implicants
-    # Printing of all the next groups starts
-    # print("\n\n\n\nGroup No.\tMinterms\tBinary of Minterms\n%s"%('='*50))
-    # for i in sorted(groups.keys()):
-        # print("%5d:"%i) # Prints group number
-        # for j in groups[i]:
-            # print("\t\t%-24s%s"%(','.join(findminterms(j)),j)) # Prints minterms and its binary representation
-        # print('-'*50)
-    # Printing of all the next groups ends
 # Process for creating tables and finding prime implicants ends
 
 
 # Printing and processing of Prime Implicant chart starts
 sz = len(str(mt[-1])) # The number of digits of the largest minterm
 chart = {}
-# print('\n\n\nPrime Implicants chart:\n\n    Minterms    |%s\n%s'%(' '.join((' '*(sz-len(str(i))))+str(i) for i in mt),'='*(len(mt)*(sz+1)+16)))
 for i in all_pi:
     merged_minterms,y = findminterms(i),0
-    # print("%-16s|"%','.join(merged_minterms),end='')
     for j in merged_minterms:
         x = mt.index(int(j))*(sz+1) # The position where we should put 'X'
         # print(' '*abs(x-y)+' '*(sz-1)+'X',end='')
@@ -161,11 +140,9 @@ for i in all_pi:
             chart[j].append(i) if i not in chart[j] else None # Add minterm in chart
         except KeyError:
             chart[j] = [i]
-    # print('\n'+'-'*(len(mt)*(sz+1)+16))
 # Printing and processing of Prime Implicant chart ends
 
 EPI = findEPI(chart) # Finding essential prime implicants
-# print("\nEssential Prime Implicants: "+', '.join(str(i) for i in EPI))
 removeTerms(chart,EPI) # Remove EPI related columns from chart
 
 if(len(chart) == 0): # If no minterms remain after removing EPI related columns
