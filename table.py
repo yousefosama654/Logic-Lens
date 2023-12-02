@@ -50,6 +50,7 @@ def flatten(x): # Flattens a list
     return flattened_items
 
 def findminterms(a): #Function for finding out which minterms are merged. For example, 10-1 is obtained by merging 9(1001) and 11(1011)
+    print(a)
     gaps = a.count('-')
     if gaps == 0:
         return [str(int(a,2))]
@@ -86,15 +87,19 @@ def removeTerms(_chart,terms): # Removes minterms which are already covered from
                 pass
 
 
-def solve(input):
+def solve(input,size):
     mt = input
     # dc =[int(i) for i in input("Enter the don't cares(If any): ").strip().split()]
     mt.sort()
     minterms = mt
     minterms.sort()
-    size = len(bin(minterms[-1]))-2
+    print(minterms)
+    # size = len(bin(minterms[-1]))-2
+    # size = 3
     groups,all_pi = {},set()
 
+    for minterm in minterms:
+        print(bin(minterm))
     # Primary grouping starts
     for minterm in minterms:
         try:
@@ -135,7 +140,6 @@ def solve(input):
         merged_minterms,y = findminterms(i),0
         for j in merged_minterms:
             x = mt.index(int(j))*(sz+1) # The position where we should put 'X'
-            # print(' '*abs(x-y)+' '*(sz-1)+'X',end='')
             y = x+sz
             try:
                 chart[j].append(i) if i not in chart[j] else None # Add minterm in chart
@@ -161,5 +165,5 @@ def solve(input):
         print('\nSolution: F = '+' + '.join(''.join(i) for i in final_result))
 
 
-solve([1])
-solve([0])
+solve([1,2],3)
+
