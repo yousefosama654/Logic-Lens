@@ -50,7 +50,7 @@ def flatten(x): # Flattens a list
     return flattened_items
 
 def findminterms(a): #Function for finding out which minterms are merged. For example, 10-1 is obtained by merging 9(1001) and 11(1011)
-    print(a)
+    # print(a)
     gaps = a.count('-')
     if gaps == 0:
         return [str(int(a,2))]
@@ -98,8 +98,6 @@ def solve(input,size):
     # size = 3
     groups,all_pi = {},set()
 
-    for minterm in minterms:
-        print(bin(minterm))
     # Primary grouping starts
     for minterm in minterms:
         try:
