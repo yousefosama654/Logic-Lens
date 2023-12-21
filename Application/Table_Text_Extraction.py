@@ -197,4 +197,20 @@ def extract_first_col(rectangles,n_cells):
    n_cells = 33  
    first_column = first_column[:n]
    first_column=sorted(first_column, key=lambda rect: rect[1])
+def is_power_of_2(num,n):
+    # Check if the number has only one '1' bit using bitwise AND
+    return   int(num) > 0 and  int(num) == 2 ** n
+def get_most_exact_algo(rect1,rect2,rect3):
+    working=None
+    rect1 -=1
+    rect2 -=1
+    rect3 -=1
+    for i in range(1,6):
+        if (is_power_of_2((rect1-i)/(i+1),i)):
+           return "morph"
+        if (is_power_of_2((rect2-i)/(i+1),i)):
+           return "hough"
+        if (is_power_of_2((rect3-i)/(i+1),i)):
+           return "contours"
+    return None  
     
