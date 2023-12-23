@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from commonfunctions import *
+import pickle
 
 class TextExtractionTableMorph:
       contours=None
@@ -77,11 +78,12 @@ class TextExtractionTableMorph:
       def draw_rect(self):
         todraw=self.gscale_img.copy()
         rectangles = np.array([cv2.boundingRect(c) for c in self.contours])
-        x_offset=15
-        y_offset=2
-        for rect in rectangles:
-            x, y, w, h = rect
-            cv2.rectangle(todraw, (x-x_offset, y-y_offset-3), (x +x_offset +w, y + h+ y_offset -5), (0, 255, 0), 2)
+        # x_offset=15
+        # y_offset=2
+        # for rect in rectangles:
+        #     x, y, w, h = rect
+        #     cv2.rectangle(todraw, (x-x_offset, y-y_offset-3), (x +x_offset +w, y + h+ y_offset -5), (0, 255, 0), 2)
+        #shoe_images([todraw])
         return np.array(rectangles)
                 
                 
@@ -90,8 +92,10 @@ class TextExtractionTableHough:
     gscale_img=None
     result=None
     Cannyimg=None
+    col_image=None
     def __init__(self, image):
-        self.image = image  
+        self.image = image
+        self.col_image=image  
         self.gscale_img=cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY)
     def binary_threshold(self):
         self.image = cv2.adaptiveThreshold(self.gscale_img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,75,15)
@@ -99,7 +103,7 @@ class TextExtractionTableHough:
         self.Cannyimg = cv2.Canny(self.gscale_img, 100, 200)
     def Hough_lines(self):
         lines = cv2.HoughLines(self.Cannyimg,1, np.pi / 180, 150, None, 80, 10)
-        line_image=np.copy(image)*0
+        line_image=np.copy(self.col_image)*0
         if lines is not None:
             for i in range(0, len(lines)):
                 rho = lines[i][0][0]
@@ -114,6 +118,7 @@ class TextExtractionTableHough:
         line_image_gray = cv2.cvtColor(line_image, cv2.COLOR_BGR2GRAY)
         _, thresholded_lines = cv2.threshold(line_image_gray, 1, 255, cv2.THRESH_BINARY)
         self.result = cv2.subtract(self.image, thresholded_lines)
+        #shoe_images([thresholded_lines],["result"])
         self.contours, hierarchy = cv2.findContours(self.result, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     def draw_rect(self):
         todraw=self.gscale_img.copy()
@@ -125,6 +130,7 @@ class TextExtractionTableHough:
         for rect in rectangles:
             x, y, w, h = rect
             cv2.rectangle(todraw, (x-x_offset, y-y_offset-3), (x +x_offset +w, y + h+ y_offset -5), (0, 255, 0), 2)
+        #shoe_images([todraw])
         return np.array(rectangles)
 
 
@@ -159,6 +165,7 @@ class TextExtractionTableContours:
         for rect in rectangles:
             x, y, w, h = rect
             cv2.rectangle(todraw, (x-x_offset, y-y_offset-3), (x +x_offset +w, y + h+ y_offset -5), (0, 255, 0), 2)
+        #shoe_images([todraw])
         return np.array(rectangles)
 
 
@@ -188,13 +195,13 @@ def ContoursProcessing(image):
 
 def extract_first_row(rectangles,n_cells):
     first_row = sorted(rectangles, key=lambda rect: rect[1])
-    first_row = first_row[:n]
+    first_row = first_row[:n_cells]
     first_row=sorted(first_row, key=lambda rect: rect[0])
     return first_row
 
 def extract_last_col(rectangles,n_cells):
    first_column = sorted(rectangles, key=lambda rect: rect[0], reverse=True)
-   first_column = first_column[:n]
+   first_column = first_column[:n_cells]
    first_column=sorted(first_column, key=lambda rect: rect[1])
    return first_column
 def is_power_of_2(num,n):
@@ -223,12 +230,32 @@ def get_n_cells_cols(power):
 def get_n_cells_rows(power):
     return power+1
 
-def extract_binaries(rects):
+def extract_binaries(rects,image):
+    x_offset=15
+    y_offset=2
     to_detect=[]
-    for x, y, w, h in rectangles:
-        extracted_rectangle = grayscale_image3[y - y_offset + 2:y + h + y_offset - 2, x - x_offset + 3:x + w + x_offset - 3]
+    for rect in rects:
+            x, y, w, h = rect
+            cv2.rectangle(image, (x-x_offset, y-y_offset-3), (x +x_offset +w, y + h+ y_offset -5), (0, 255, 0), 2)
+    print(len(rects))
+   # show_images([image])
+    for x, y, w, h in rects:
+        extracted_rectangle = image[y - y_offset + 2:y + h + y_offset - 2, x - x_offset + 3:x + w + x_offset - 3]
         resized_rectangle = cv2.resize(extracted_rectangle, (32, 32))
         to_detect.append(resized_rectangle)
-        return to_detect
+       # show_images([resized_rectangle])
+    return to_detect
     
+def extract_hog_features(img):
     
+    img = cv2.resize(img, (32, 32))
+    win_size = (32, 32)
+    cell_size = (4, 4)
+    block_size_in_cells = (2, 2)
+    
+    block_size = (block_size_in_cells[1] * cell_size[1], block_size_in_cells[0] * cell_size[0])
+    block_stride = (cell_size[1], cell_size[0])
+    nbins = 9  
+    hog = cv2.HOGDescriptor(win_size, block_size, block_stride, cell_size, nbins,2)
+    h = hog.compute(img)
+    return h.flatten()
