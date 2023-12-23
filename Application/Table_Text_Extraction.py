@@ -151,7 +151,7 @@ class TextExtractionTableContours:
     def draw_rect(self):
         contours, hierarchy = cv2.findContours(self.result, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         todraw=self.gscale_img.copy()
-        min_rectangle_area = 50
+        min_rectangle_area = 60
         rectangles = np.array([cv2.boundingRect(c) for c in contours])
         rectangles = [rect for rect in rectangles if rect[2] * rect[3] > min_rectangle_area]
         x_offset=18
@@ -188,15 +188,15 @@ def ContoursProcessing(image):
 
 def extract_first_row(rectangles,n_cells):
     first_row = sorted(rectangles, key=lambda rect: rect[1])
-    n_cells = 6  
     first_row = first_row[:n]
     first_row=sorted(first_row, key=lambda rect: rect[0])
+    return first_row
 
-def extract_first_col(rectangles,n_cells):
+def extract_last_col(rectangles,n_cells):
    first_column = sorted(rectangles, key=lambda rect: rect[0], reverse=True)
-   n_cells = 33  
    first_column = first_column[:n]
    first_column=sorted(first_column, key=lambda rect: rect[1])
+   return first_column
 def is_power_of_2(num,n):
     # Check if the number has only one '1' bit using bitwise AND
     return   int(num) > 0 and  int(num) == 2 ** n
@@ -207,10 +207,28 @@ def get_most_exact_algo(rect1,rect2,rect3):
     rect3 -=1
     for i in range(1,6):
         if (is_power_of_2((rect1-i)/(i+1),i)):
-           return "morph"
+           return "morph",i
         if (is_power_of_2((rect2-i)/(i+1),i)):
-           return "hough"
+           return "hough",i
         if (is_power_of_2((rect3-i)/(i+1),i)):
-           return "contours"
+           return "contours",i
     return None  
+
+def load_model(model):
+    model = pickle.load(open(model, 'rb'))
+    return model
+
+def get_n_cells_cols(power):
+    return 2**power+1
+def get_n_cells_rows(power):
+    return power+1
+
+def extract_binaries(rects):
+    to_detect=[]
+    for x, y, w, h in rectangles:
+        extracted_rectangle = grayscale_image3[y - y_offset + 2:y + h + y_offset - 2, x - x_offset + 3:x + w + x_offset - 3]
+        resized_rectangle = cv2.resize(extracted_rectangle, (32, 32))
+        to_detect.append(resized_rectangle)
+        return to_detect
+    
     

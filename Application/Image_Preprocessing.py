@@ -5,6 +5,10 @@ import numpy as np
 import skimage.io as io
 import functools
 # this helps to find the paper contour
+
+def load_image(path):
+    img = cv2.imread(path)
+    return img
 def find_biggest_contours(contours):
     biggest = np.array([])
     max_area = 0
@@ -18,7 +22,7 @@ def find_biggest_contours(contours):
                 biggest = corners
                 max_area = area
     return biggest
-def Deskew(image): 
+def Deskew(image,show=False): 
     img_original = image.copy()
     img = image.copy()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -34,8 +38,11 @@ def Deskew(image):
     contours, hierarchy = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     Contour_Frames = img.copy()
     Contour_Frames = cv2.drawContours(Contour_Frames, contours, -1,  (0, 255, 0), 10)
+    if(show):   show_images([Contour_Frames])
     biggest_contours = find_biggest_contours(contours)
+    print(biggest_contours)
     new_img = cv2.drawContours(img, [biggest_contours], -1, (0, 255, 0), 3)
+    if(show):   show_images([new_img])
 
     # reorder corner pixels (src)
     points = biggest_contours.reshape(4, 2)
