@@ -9,21 +9,23 @@ import functools
 def load_image(path):
     img = cv2.imread(path)
     return img
+# this helps to find the paper contour
 def find_biggest_contours(contours):
     biggest = np.array([])
     max_area = 0
+    test = 0
     for i in contours:
         area = cv2.contourArea(i)
-        if area > 10000:
+        if area > 15000:
             peri = cv2.arcLength(i, True)
-            corners = cv2.approxPolyDP(i, 0.02 * peri, True)
+            corners = cv2.approxPolyDP(i, 0.01 * peri, True)
             # to check that it is a rect and has the max area
             if area > max_area and len(corners) == 4:
                 biggest = corners
                 max_area = area
     return biggest
-def Deskew(image,show=False): 
-    img_original = image.copy()
+def Deskew(image:np.ndarray,show=False):
+    img_original =  image.copy()
     img = image.copy()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
@@ -39,11 +41,13 @@ def Deskew(image,show=False):
     Contour_Frames = img.copy()
     Contour_Frames = cv2.drawContours(Contour_Frames, contours, -1,  (0, 255, 0), 10)
     if(show):   show_images([Contour_Frames])
+    height, width, _ = img.shape
     biggest_contours = find_biggest_contours(contours)
-    print(biggest_contours)
+    if(len(biggest_contours)==0): 
+        biggest_contours= np.array([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]])        
+    if(show):    print(biggest_contours)
     new_img = cv2.drawContours(img, [biggest_contours], -1, (0, 255, 0), 3)
     if(show):   show_images([new_img])
-
     # reorder corner pixels (src)
     points = biggest_contours.reshape(4, 2)
     input_points = np.zeros((4, 2), dtype="float32")
@@ -104,7 +108,20 @@ def expression_preprocessing(image):
     img_Thresholded = cv2.adaptiveThreshold(grey_Deskewed_image, 255, cv2.ADAPTIVE_THRESH_MEAN_C,cv2.THRESH_BINARY, 25, 5) 
     img_output=remove_edges(img_Thresholded)
     return img_output
+
+def isTable_Size(img):
+    h,w,_=img.shape
+    area=h*w
+    if (area<330000):
+        return True
+    else:
+        return False
+
 def Table_Preprocessing(image):
-    image=Deskew(image)
-    image=remove_edges(image)
-    return image
+    paper=Deskew(image,show=False)
+    show_images([paper],["this the table after deskewing"])    
+    if(isTable_Size(paper)):
+        return paper
+    else:
+        paper=remove_edges(paper)
+        return paper

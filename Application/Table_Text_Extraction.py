@@ -118,7 +118,7 @@ class TextExtractionTableHough:
         line_image_gray = cv2.cvtColor(line_image, cv2.COLOR_BGR2GRAY)
         _, thresholded_lines = cv2.threshold(line_image_gray, 1, 255, cv2.THRESH_BINARY)
         self.result = cv2.subtract(self.image, thresholded_lines)
-        #shoe_images([thresholded_lines],["result"])
+       # show_images([self.result])
         self.contours, hierarchy = cv2.findContours(self.result, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     def draw_rect(self):
         todraw=self.gscale_img.copy()
@@ -130,7 +130,7 @@ class TextExtractionTableHough:
         for rect in rectangles:
             x, y, w, h = rect
             cv2.rectangle(todraw, (x-x_offset, y-y_offset-3), (x +x_offset +w, y + h+ y_offset -5), (0, 255, 0), 2)
-        #shoe_images([todraw])
+        show_images([todraw])
         return np.array(rectangles)
 
 
@@ -151,13 +151,14 @@ class TextExtractionTableContours:
         contour1 = self.gscale_img.copy()   
         contour_image = np.zeros_like(self.image)
         for contour in contours:
-            if cv2.contourArea(contour) < 1000:
+            if cv2.contourArea(contour) < 2000:
                 cv2.drawContours(contour_image, [contour], -1, (255), thickness=cv2.FILLED)
         self.result = cv2.bitwise_and(self.image, self.image, mask=contour_image)
+        show_images([self.result])
     def draw_rect(self):
         contours, hierarchy = cv2.findContours(self.result, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         todraw=self.gscale_img.copy()
-        min_rectangle_area = 60
+        min_rectangle_area = 20
         rectangles = np.array([cv2.boundingRect(c) for c in contours])
         rectangles = [rect for rect in rectangles if rect[2] * rect[3] > min_rectangle_area]
         x_offset=18
@@ -165,11 +166,10 @@ class TextExtractionTableContours:
         for rect in rectangles:
             x, y, w, h = rect
             cv2.rectangle(todraw, (x-x_offset, y-y_offset-3), (x +x_offset +w, y + h+ y_offset -5), (0, 255, 0), 2)
-        #shoe_images([todraw])
+        show_images([todraw])
         return np.array(rectangles)
 
 
- 
 def MorphProcessing(image):
     table=TextExtractionTableMorph(image)
     table.binary_threshold()
@@ -207,7 +207,7 @@ def extract_last_col(rectangles,n_cells):
 def is_power_of_2(num,n):
     # Check if the number has only one '1' bit using bitwise AND
     return   int(num) > 0 and  int(num) == 2 ** n
-def get_most_exact_algo(rect1,rect2,rect3):
+def get_most_exact_algo(rect1,rect2,rect3) :
     working=None
     rect1 -=1
     rect2 -=1
@@ -219,7 +219,7 @@ def get_most_exact_algo(rect1,rect2,rect3):
            return "hough",i
         if (is_power_of_2((rect3-i)/(i+1),i)):
            return "contours",i
-    return None  
+    return None
 
 def load_model(model):
     model = pickle.load(open(model, 'rb'))

@@ -4,16 +4,18 @@ import matplotlib.pyplot as plt
 from commonfunctions import *
 from Table_Text_Extraction import *
 from Image_Preprocessing import *
+from McCluskey import *
 def main():
-    img=load_image("test6.png")
-    #show_images([img])
+    img=load_image("../img/table_design.jpg")
+    show_images([img],["this is the original image"])
     table=Table_Preprocessing(img)
-    #show_images([table])
+    show_images([table],["this is tablea after Table_Preprocessing"])
     rect1=MorphProcessing(table.copy())
     rect2=HoughProcessing(table.copy())
     rect3=ContoursProcessing(table.copy())
-    print(len(rect1),len(rect2),len(rect3))
+    print(len(rect1),len(rect2),len(rect3) )
     result,exp=get_most_exact_algo(len(rect1),len(rect2),len(rect3))
+    print(result)
     candidates={'morph':rect1,'hough':rect2,'contours':rect3}
     final_candidate=None
     if(result==None):
@@ -31,13 +33,12 @@ def main():
     for bit in bits:
         final_result.append(model.predict([extract_hog_features(bit)]))
     result_array = np.concatenate(final_result)
+
     print(result_array)
-    
+    numbers =  [int(num) for num in result_array]
+    numbers=np.array(numbers)
+    numbers = np.where(numbers == 1)[0].tolist()
+    print(numbers,exp)
+    solveMcCluskey(numbers ,exp)
 if __name__ == "__main__":
-    main()
-    
-              
-    
-  
-    
-    
+    main()   
