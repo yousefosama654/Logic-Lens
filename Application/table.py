@@ -5,11 +5,11 @@ from commonfunctions import *
 from Table_Text_Extraction import *
 from Image_Preprocessing import *
 from McCluskey import *
-def main():
-    img=load_image("../img/table_design.jpg")
-    show_images([img],["this is the original image"])
+def main_table(path="./testcases/tables.png"):
+    img=load_image(path)
+    #show_images([img],["this is the original image"])
     table=Table_Preprocessing(img)
-    show_images([table],["this is tablea after Table_Preprocessing"])
+    #show_images([table],["this is table after Table_Preprocessing"])
     rect1=MorphProcessing(table.copy())
     rect2=HoughProcessing(table.copy())
     rect3=ContoursProcessing(table.copy())
@@ -39,6 +39,6 @@ def main():
     numbers=np.array(numbers)
     numbers = np.where(numbers == 1)[0].tolist()
     print(numbers,exp)
-    solveMcCluskey(numbers ,exp)
+    return solveMcCluskey(numbers ,exp)
 if __name__ == "__main__":
-    main()   
+    main_table()   

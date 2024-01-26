@@ -130,7 +130,7 @@ class TextExtractionTableHough:
         for rect in rectangles:
             x, y, w, h = rect
             cv2.rectangle(todraw, (x-x_offset, y-y_offset-3), (x +x_offset +w, y + h+ y_offset -5), (0, 255, 0), 2)
-        show_images([todraw])
+       # show_images([todraw])
         return np.array(rectangles)
 
 
@@ -154,7 +154,7 @@ class TextExtractionTableContours:
             if cv2.contourArea(contour) < 2000:
                 cv2.drawContours(contour_image, [contour], -1, (255), thickness=cv2.FILLED)
         self.result = cv2.bitwise_and(self.image, self.image, mask=contour_image)
-        show_images([self.result])
+        #show_images([self.result])
     def draw_rect(self):
         contours, hierarchy = cv2.findContours(self.result, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         todraw=self.gscale_img.copy()
@@ -166,7 +166,7 @@ class TextExtractionTableContours:
         for rect in rectangles:
             x, y, w, h = rect
             cv2.rectangle(todraw, (x-x_offset, y-y_offset-3), (x +x_offset +w, y + h+ y_offset -5), (0, 255, 0), 2)
-        show_images([todraw])
+        #show_images([todraw])
         return np.array(rectangles)
 
 
@@ -219,7 +219,7 @@ def get_most_exact_algo(rect1,rect2,rect3) :
            return "hough",i
         if (is_power_of_2((rect3-i)/(i+1),i)):
            return "contours",i
-    return None
+    return None,None
 
 def load_model(model):
     model = pickle.load(open(model, 'rb'))

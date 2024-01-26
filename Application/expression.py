@@ -5,16 +5,44 @@ from commonfunctions import *
 from Expression_Extraction import *
 import ttg
 
-def main():
-    img=load_image("trainlet.png")
-    letters=expression_preprocessing(img)
-    gscale_letters=[cv2.cvtColor(letter, cv2.COLOR_BGR2GRAY) for letter in letters]
-    thresh_letters=[cv2.adaptiveThreshold(letter,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,75,15) for letter in gscale_letters]
+def main_expression(path="./testcases/trainlet.png"):
+    img=io.imread(path)
+    #show_images([img],["original"])
+    letters=expression_preprocessing(img,False)
+    # show_images(letters)
+    if(len(letters)==0):
+        return "Empty Piece of Paper"
+    
+    letters=letters[2:]
+
+    #show_images(letters)
+    # cv2.imwrite("./thresh_letters.png",thresh_letters[0])
     # classifier
-    # distinct_letters=get_distinct_letters(letters)
-    # expression=construct_expression(letters)
+    features=load_model("../ML models/letters_model2.pkl")
+    classified=[]
+    for letter in letters:
+        classified.append(predict(letter,features))
+    print(classified)
+    distinct_letters=get_distinct_letters(classified)
+    print(distinct_letters)
+    op = ['OR', 'NOT', 'AND', 'XOR']
+    string_array_lower = [elem.lower() if elem in op else elem for elem in classified]
+    result_string = " ".join(string_array_lower)
+    #expression=construct_expression(letters)
     #algorithm
-    print(ttg.Truths(['a', 'b'],['a xor b']))
+    table=""
+    try:
+        table= str(ttg.Truths(distinct_letters,[result_string]))
+    except Exception as e:
+        print("error")
+    lines = table.split('\n')
+    filtered_lines = [line for line in lines if ('+' not in line) and ('-' not in line)]
+    formatted_table = '\n'.join(filtered_lines)
+    print(formatted_table)
+    return formatted_table
+    
+     
 
 if __name__ == "__main__":
-    main()   
+    main_expression()
+    

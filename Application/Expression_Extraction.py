@@ -2,7 +2,16 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from commonfunctions import *
-# this helps to find the paper contour
+import pickle
+import skimage.io as io
+from skimage.feature import hog
+def remove_edges(img):
+    image = img.copy()
+    h = image.shape[0]
+    w = image.shape[1]
+    image=image[int(0.05*h):int(0.95*h), int(0.01*w):int(0.99*w)]
+    image = cv2.resize(image,(w,h))
+    return image
 def find_biggest_contours(contours):
     biggest = np.array([])
     max_area = 0
@@ -16,6 +25,15 @@ def find_biggest_contours(contours):
                 biggest = corners
                 max_area = area
     return biggest
+def extract_hog_features(img): 
+    img=cv2.resize(img,(64,64))
+    fd, hog_image = hog(
+        img,
+        pixels_per_cell=(2, 2),
+        cells_per_block=(2, 2),
+        visualize=True,        
+    )
+    return fd,hog_image
 def Deskew(image:np.ndarray,show=False): 
     img_original = image.copy()
     img = image.copy()
@@ -29,7 +47,7 @@ def Deskew(image:np.ndarray,show=False):
     edged = cv2.erode(dilatedImg, kernel, iterations=1)
 
     # Contour detection
-    contours, hierarchy = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(edged.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     Contour_Frames = img.copy()
     Contour_Frames = cv2.drawContours(Contour_Frames, contours, -1,  (0, 255, 0), 10)
     if(show):   show_images([Contour_Frames])
@@ -39,7 +57,7 @@ def Deskew(image:np.ndarray,show=False):
         biggest_contours= np.array([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]])        
     if(show):    print(biggest_contours)
     new_img = cv2.drawContours(img, [biggest_contours], -1, (0, 255, 0), 3)
-    if(show):   show_images([new_img])
+    if(show):   show_images([new_img],["after countour"])
     # reorder corner pixels (src)
     points = biggest_contours.reshape(4, 2)
     input_points = np.zeros((4, 2), dtype="float32")
@@ -54,8 +72,10 @@ def Deskew(image:np.ndarray,show=False):
 
 
     (top_left, top_right, bottom_right, bottom_left) = input_points
-    bottom_width = np.sqrt(((bottom_right[0] - bottom_left[0]) * 2) + ((bottom_right[1] - bottom_left[1]) * 2))
-    top_width = np.sqrt(((top_right[0] - top_left[0]) * 2) + ((top_right[1] - top_left[1]) * 2))
+    bottom_width = np.sqrt(((bottom_right[0] - bottom_left[0]) ** 2) + ((bottom_right[1] - bottom_left[1]) ** 2))
+    top_width = np.sqrt(((top_right[0] - top_left[0]) ** 2) + ((top_right[1] - top_left[1]) ** 2))
+
+
 
     # Output image size
     max_width = max(int(bottom_width), int(top_width))
@@ -74,7 +94,7 @@ def get_letters(img, verbose = False,single_letter = False):
     img =  cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     h,w = img.shape
     retSize = (64,64)    
-    tolerance = 3
+    tolerance = 0
 
     #thresholding the image to a binary image
     thresh = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,75,15)
@@ -90,7 +110,6 @@ def get_letters(img, verbose = False,single_letter = False):
     cv2.drawContours(test_img, contours, -1, (0,255,0), 3)
     if verbose:
         show_images([test_img],['contours before filtering'])
-
     average_area = 0.0   
     max_area = 0.0   
     max_width  = 0.0  
@@ -178,9 +197,15 @@ def get_letters(img, verbose = False,single_letter = False):
         
     # For each contour, find the bounding rectangle and draw it
     ret_images = []
+    # x-15 : x+15
+    # y- 5 : y+5
+    pad_h = 5
+    pad_w = 18
     for ind,(box,_) in enumerate(contours_list):
         x,y,w,h = tuple(box)
         new_img  = img[y-tolerance:y+h+tolerance, x-tolerance:x+w+tolerance].astype(np.uint8)
+        new_img=cv2.adaptiveThreshold(new_img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY_INV,75,15)
+        new_img = np.pad(new_img, ((pad_h,pad_h),(pad_w,pad_w)), 'constant')
         ret_images.append(new_img)
 
 
@@ -197,21 +222,26 @@ def get_letters(img, verbose = False,single_letter = False):
         
     if(len(ret_images) == 0):
         return [cv2.resize(img.max()-img, retSize)]
-    return ret_images
+    
 
-def expression_preprocessing(image):
+    return ret_images
+def expression_preprocessing(image,verbose=False):
     img=image.copy()
-    Deskewed_image=Deskew(img)
-    img=remove_edges(Deskewed_image)
-    letters=get_letters(img)
+    Deskewed_image=Deskew(img,verbose)
+    #show_images([Deskewed_image],["after deks"])
+    img_output=remove_edges(Deskewed_image)
+    letters=get_letters(img_output)
+    if verbose:
+        show_images(letters)
     return letters
 def load_image(path):
-    img = cv2.imread(path)
+    img = io.imread(path)
     return img
 def get_distinct_letters(letters):
     distinct_letters=[]
+    letters_to_compare=['B','E','Y','H']
     for letter in letters:
-        if letter not in distinct_letters:
+        if letter not in distinct_letters and letter in letters_to_compare:
             distinct_letters.append(letter)
     return distinct_letters
 
@@ -228,3 +258,35 @@ def construct_expression(letters):
             letter="xor"
         expression+=" "+ letter
     return expression
+def load_model(name):
+  with open(name, 'rb') as file:
+      loaded_array_list = pickle.load(file)
+      return loaded_array_list
+def get_char_from_digit(digit):
+    char = {
+        0: 'B',
+        1: 'E',
+        2: 'H',
+        3: 'Y',
+        4: 'XOR',
+        5: 'AND',
+        6: 'NOT',
+        7: 'OR',
+        8: '(',
+        9: ')'
+    }
+    return char[digit]
+def calculate_distance(feat1: np.ndarray, feat2: np.ndarray) -> float:
+
+    return np.mean((feat1 - feat2) ** 2)
+def predict(image,features):
+    img=image.copy()
+    feature_extract,_=extract_hog_features(img)
+    #show_images([img])
+    distances: float = [
+        calculate_distance(feature_extract, src_feat[:-1]) 
+        for src_feat in features
+        ]
+    min_distance_index = np.argmin(distances)
+    result=get_char_from_digit(features[min_distance_index][-1])
+    return result

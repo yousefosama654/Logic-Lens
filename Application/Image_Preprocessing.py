@@ -119,7 +119,7 @@ def isTable_Size(img):
 
 def Table_Preprocessing(image):
     paper=Deskew(image,show=False)
-    show_images([paper],["this the table after deskewing"])    
+    #show_images([paper],["this the table after deskewing"])    
     if(isTable_Size(paper)):
         return paper
     else:
