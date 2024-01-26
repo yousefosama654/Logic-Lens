@@ -51,8 +51,21 @@ pip install -U scikit-learn
 https://github.com/yousefosama654/Logic-Lens/assets/87082462/6fd6422e-b0ab-4f4a-945e-f78ef6fb8719
 
 # Contributors
-- [Contributor 1](https://github.com/Omar-Said-4)
-- [Contributor 2](https://github.com/yousefosama654)
+<table>
+  <tr>
+   <td align="center">
+    <a href="https://github.com/Omar-Said-4" target="_black">
+    <img src="https://avatars.githubusercontent.com/u/87082462?v=4" width="150px;" alt="Ahmed Samy"/>
+    <br />
+    <sub><b>Omar Said</b></sub></a>
+    </td>
+   <td align="center">
+    <a href="https://github.com/yousefosama654" target="_black">
+    <img src="https://avatars.githubusercontent.com/u/93356614?v=4" width="150px;" alt="Kareem Samy"/>
+    <br />
+    <sub><b>Yousef Osama</b></sub></a>
+    </td>
+  </tr>
 
 # Badges
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
