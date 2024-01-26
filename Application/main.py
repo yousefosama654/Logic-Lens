@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import random
 from werkzeug.utils import secure_filename
 from expression import *
+from table import *
 app = Flask(__name__)
 @app.route('/uploadImage', methods=['POST'])
 def uploadImage():
@@ -26,7 +27,6 @@ def uploadImage():
             print(data)
         elif (type_process=="Table"):
             data=main_table("./uploaded/" + str(five_digit_number) + filename)
-            data="ABCDE"
             print(data)
         return jsonify({"status": "200", "result": "Image uploaded successfully",
                         "data":data

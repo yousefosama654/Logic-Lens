@@ -5,11 +5,11 @@ from commonfunctions import *
 from Table_Text_Extraction import *
 from Image_Preprocessing import *
 from McCluskey import *
-def main_table(path="./testcases/tables.png"):
+def main_table(path="./testcases/test.png"):
     img=load_image(path)
-    #show_images([img],["this is the original image"])
+    if(img is None):
+        print("lll")
     table=Table_Preprocessing(img)
-    #show_images([table],["this is table after Table_Preprocessing"])
     rect1=MorphProcessing(table.copy())
     rect2=HoughProcessing(table.copy())
     rect3=ContoursProcessing(table.copy())

@@ -158,8 +158,11 @@ def solveMcCluskey(input,size):
         final_result.extend(findVariables(i) for i in EPI) # Adding the EPIs to final solution
     if final_result==[[]]:
         print('\nSolution: F = 1')
+        return 'F = 1'
     else:
-        print('\nSolution: F = '+' + '.join(''.join(i) for i in final_result))
+        solution = 'F = ' + ' + '.join(''.join(i) for i in final_result)
+        print('\nSolution: '+ solution)
+        return solution
 
 
 
