@@ -11,6 +11,7 @@ Logic Lens is an application that allows you to get the truth table of a logical
 - [Used Python Libraries](#Used-Python-Libraries)
 - [Used Flutter Libraries](#Used-Flutter-Libraries)
 - [Demo](#Demo)
+- [Contributors](#Contributors)
 - [Badges](#Badges)
 
 # Installation
@@ -49,7 +50,9 @@ pip install -U scikit-learn
 
 https://github.com/yousefosama654/Logic-Lens/assets/87082462/6fd6422e-b0ab-4f4a-945e-f78ef6fb8719
 
-
+# Contributors
+- [Contributor 1](https://github.com/Omar-Said-4)
+- [Contributor 2](https://github.com/yousefosama654)
 
 # Badges
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
