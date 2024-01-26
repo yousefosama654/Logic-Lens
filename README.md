@@ -12,6 +12,7 @@ Logic Lens is an application that allows you to get the truth table of a logical
 - [Used Flutter Libraries](#Used-Flutter-Libraries)
 - [Demo](#Demo)
 - [✍️ Contributors](#contributors)
+- [🔒 License](#license)
 - [Badges](#Badges)
 
 # Installation
@@ -67,6 +68,8 @@ https://github.com/yousefosama654/Logic-Lens/assets/87082462/6fd6422e-b0ab-4f4a-
     </td>
   </tr>
 </table>
+# 🔒 License <a name = "license"></a>
+This software is licensed under MIT License, See [License](https://github.com/yousefosama654/Logic-Lens/blob/main/LICENSE)
 
 # Badges
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
