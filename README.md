@@ -1,7 +1,7 @@
 
 # Logic_Lens
 
-![Alt text](icon.png)
+![icon](https://github.com/yousefosama654/Logic-Lens/assets/87082462/ec71b993-9f61-4133-b58b-7291826acba5)
 
 Logic Lens is an application that allows you to get the truth table of a logical expression, or the corresponding logical expression of a given truth table, only by taking a picture of it! 
 
@@ -24,7 +24,7 @@ pip install -U scikit-learn
 
 
 # System-Blocks
-![Alt text](image.png)
+![image](https://github.com/yousefosama654/Logic-Lens/assets/87082462/8327e815-a427-4b01-927a-aac1322bf7a5)
 
 # Used-Python-Libraries
 - <a href="https://scikit-image.org/" target="_blank"><font size="+2">Scikit-image</font></a>
